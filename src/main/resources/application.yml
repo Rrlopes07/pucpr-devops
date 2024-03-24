@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://${HOST_POSTGRES}/forum
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  cache:
+    type: redis
+  redis:
+    host: ${HOST_REDIS}
+    port: 6379
+  mail:
+    host: sandbox.smtp.mailtrap.io
+    port: 2525
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  key: ${JWT_KEY}
+  access-token-expiration: 3600000
+  refresh-token-expiration: 86400000
