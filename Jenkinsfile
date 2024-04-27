@@ -23,7 +23,7 @@ pipeline {
                 snykSecurity(
                     snykInstallation: env.SNYK_INSTALLATION,
                     snykTokenId: env.SNYK_TOKEN,
-                    severity: "high"
+                    severity: "Critical"
                 )
             }
         }
