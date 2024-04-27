@@ -6,6 +6,8 @@ pipeline {
             steps {
                 git branch: 'main', url: 'https://github.com/Rrlopes07/pucpr-devops.git'
 
+                sh'mvn dependency:sources'
+
                 sh 'mvn clean package -DskipTests=true'
             }
         }
