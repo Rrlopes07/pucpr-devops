@@ -1,0 +1,25 @@
+version: "3.7"
+
+services:
+  app:
+    image: ${DOCKER_USER}/forum:latest
+    ports: 
+      - "8080:8080"
+    environment:
+      HOST_POSTGRES: postgres
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      HOST_REDIS: redis
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      JWT_KEY: ${JWT_KEY}
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: forum
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+  redis:
+    image: redis
