@@ -23,7 +23,7 @@ class Configuration {
         CustomUserDetailsService(userRepository)
 
     @Bean
-    fun encoder(): PasswordEncoder = Jwts.SIG.HS256.key()
+    fun encoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
     fun authenticationProvider(userRepository: UserRepository): AuthenticationProvider =
