@@ -16,13 +16,6 @@ pipeline {
             steps {
                 sh 'mvn -B test'
             }
-
-            post {
-                always {
-                    // Algumas vezes, os testes automatizados não eliminam todos os containeres utilizados
-                    sh 'docker rm -f $(docker ps -qa)'
-                }
-            }
         }
 
         stage('SAST') {

@@ -2,6 +2,7 @@ package br.com.forum.configuration
 
 import br.com.forum.repository.UserRepository
 import br.com.forum.service.CustomUserDetailsService
+import io.jsonwebtoken.Jwts
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -22,7 +23,7 @@ class Configuration {
         CustomUserDetailsService(userRepository)
 
     @Bean
-    fun encoder(): PasswordEncoder = BCryptPasswordEncoder()
+    fun encoder(): PasswordEncoder = Jwts.SIG.HS256.key()
 
     @Bean
     fun authenticationProvider(userRepository: UserRepository): AuthenticationProvider =
