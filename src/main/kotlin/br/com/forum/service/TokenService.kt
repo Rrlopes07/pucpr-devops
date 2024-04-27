@@ -13,7 +13,7 @@ class TokenService(
     jwtProperties: JwtProperties
 ) {
 
-    private val secretKey = Jwts.SIG.HS256.key(
+    private val secretKey = Keys.hmacShaKeyFor(
         jwtProperties.key.toByteArray()
     )
 
