@@ -11,6 +11,13 @@ pipeline {
             steps {
                 git branch: 'main', url: 'https://github.com/Rrlopes07/pucpr-devops.git'
 
+                sh "sed -i 's/\${DB_USER}/${env.DB_USER}/g' docker-compose.yml"
+                sh "sed -i 's/\${DB_PASSWORD}/${env.DB_PASSWORD}/g' docker-compose.yml"
+                sh "sed -i 's/\${MAIL_USERNAME}/${env.MAIL_USERNAME}/g' docker-compose.yml"
+                sh "sed -i 's/\${MAIL_PASSWORD}/${env.MAIL_PASSWORD}/g' docker-compose.yml"
+                sh "sed -i 's/\${JWT_KEY}/${env.JWT_KEY}/g' docker-compose.yml"
+                sh "sed -i 's/\${DOCKER_USER}/${env.DOCKER_USER}/g' docker-compose.yml"
+
                 sh'mvn dependency:sources'
 
                 sh 'mvn clean package -DskipTests=true'
@@ -51,15 +58,8 @@ pipeline {
                         remote.user = userName
                         remote.identityFile = identity
                     }
-
-                    sh "sed -i 's/\${DB_USER}/${env.DB_USER}/g' docker-compose.yml"
-                    sh "sed -i 's/\${DB_PASSWORD}/${env.DB_PASSWORD}/g' docker-compose.yml"
-                    sh "sed -i 's/\${MAIL_USERNAME}/${env.MAIL_USERNAME}/g' docker-compose.yml"
-                    sh "sed -i 's/\${MAIL_PASSWORD}/${env.MAIL_PASSWORD}/g' docker-compose.yml"
-                    sh "sed -i 's/\${JWT_KEY}/${env.JWT_KEY}/g' docker-compose.yml"
-                    sh "sed -i 's/\${DOCKER_USER}/${env.DOCKER_USER}/g' docker-compose.yml"
                     
-                    sshCommand remote: remote, command: 'if [ -f docker-compose.yml ]; then sudo docker-compose down && rm docker-compose.yml; fi'
+                    sshCommand remote: remote, command: '[ -f /home/ubuntu/docker-compose.yml ] && { docker-compose down; rm docker-compose.yml }'
                     sshPut remote: remote, from: 'docker-compose.yml', into: '.'
                     sshCommand remote: remote, command: 'sudo docker-compose up -d'
                 }
