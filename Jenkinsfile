@@ -59,9 +59,9 @@ pipeline {
                         remote.identityFile = identity
                     }
                     
-                    sshCommand remote: remote, command: '[ -f /home/ubuntu/docker-compose.yml ] && { docker-compose down; rm docker-compose.yml }'
                     sshPut remote: remote, from: 'docker-compose.yml', into: '.'
-                    sshCommand remote: remote, command: 'sudo docker-compose up -d'
+                    sshCommand remote: remote, command: 'docker-compose up -d'
+                    sshCommand remote: remote, command: 'rm docker-compose.yml'
                 }
             }
         }
