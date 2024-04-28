@@ -1,3 +1,8 @@
+def remote = [:]
+remote.name = env.DEPLOY_NAME
+remote.host = env.DEPLOY_URL
+remote.allowAnyHosts = true
+
 pipeline {
     agent any
 
@@ -38,7 +43,15 @@ pipeline {
                 }
 
                 // Deploy na aws
-                sh """ssh -i ${env.SSH_KEY} ubuntu@${env.DEPLOY_URL} wget https://raw.githubusercontent.com/Rrlopes07/pucpr-devops/main/docker-compose.yml && sudo docker-compose up -d"""
+                withCredentials([sshUserPrivateKey(credentialsId: 'ssh-credentials', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) 
+                {
+                    remote.user = userName
+                    remote.identityFile = identity
+
+                    sshCommand remote: remote, command: 'if [ -f docker-compose.yml ]; then sudo docker-compose down && rm docker-compose.yml; fi'
+                    sshPut remote: remote, from: 'docker-compose.yml', into: '.'
+                    sshCommand remote: remote, command: 'sudo docker-compose up -d'
+                }
             }
         }
     }
