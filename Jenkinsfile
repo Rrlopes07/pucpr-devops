@@ -33,7 +33,7 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Docker') {
             steps {
                 // Build e push
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
@@ -43,16 +43,20 @@ pipeline {
                 }
 
                 // Deploy na aws
-                withCredentials([sshUserPrivateKey(credentialsId: 'ssh-credentials', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) 
-                {
-                    remote.user = userName
-                    remote.identityFile = identity
+                
+            }
+        }
 
-                    step {
-                        sshCommand remote: remote, command: 'if [ -f docker-compose.yml ]; then sudo docker-compose down && rm docker-compose.yml; fi'
-                        sshPut remote: remote, from: 'docker-compose.yml', into: '.'
-                        sshCommand remote: remote, command: 'sudo docker-compose up -d'
-                    }
+        node {
+            withCredentials([sshUserPrivateKey(credentialsId: 'ssh-credentials', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) 
+            {
+                remote.user = userName
+                remote.identityFile = identity
+
+                stage('Deploy AWS') {
+                    sshCommand remote: remote, command: 'if [ -f docker-compose.yml ]; then sudo docker-compose down && rm docker-compose.yml; fi'
+                    sshPut remote: remote, from: 'docker-compose.yml', into: '.'
+                    sshCommand remote: remote, command: 'sudo docker-compose up -d'
                 }
             }
         }
