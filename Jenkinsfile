@@ -70,7 +70,7 @@ pipeline {
     post {
         success {
             script {
-                discordSend description: "Pipeline bem-sucedida", footer: "Backend da API REST Forum atualizada", link: env.API_URL, result: currentBuild.currentResult, title: "API FORUM PIPELINE", webhookURL: env.DISCORD_WEBHOOK
+                discordSend description: "API Atualizada", footer: "Nova versão da API em produção", link: env.JENKINS_URL, result: currentBuild.currentResult, title: "Pipeline bem-sucedida", webhookURL: env.DISCORD_WEBHOOK
             }
         }
 
