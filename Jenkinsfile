@@ -47,9 +47,11 @@ pipeline {
         stage('Deploy AWS') {
             steps {
                 withCredentials([sshUserPrivateKey(credentialsId: 'ssh-credentials', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
-                    remote.user = userName
-                    remote.identityFile = identity
-
+                    script {
+                        remote.user = userName
+                        remote.identityFile = identity
+                    }
+                    
                     sshCommand remote: remote, command: 'if [ -f docker-compose.yml ]; then sudo docker-compose down && rm docker-compose.yml; fi'
                     sshPut remote: remote, from: 'docker-compose.yml', into: '.'
                     sshCommand remote: remote, command: 'sudo docker-compose up -d'
