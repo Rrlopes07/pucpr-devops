@@ -31,7 +31,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 // Build e push
-                withCredentials([usenamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
                     sh "docker build -t ${env.dockerHubUser}/forum:latest ."
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
                     sh "docker push ${env.dockerHubUser}/forum:latest"
