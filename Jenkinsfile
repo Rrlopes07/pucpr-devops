@@ -41,21 +41,19 @@ pipeline {
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
                     sh "docker push ${env.dockerHubUser}/forum:latest"
                 }
-
-                // Deploy na aws
-                
             }
         }
 
-        withCredentials([sshUserPrivateKey(credentialsId: 'ssh-credentials', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) 
-        {
-            remote.user = userName
-            remote.identityFile = identity
+        stage('Deploy AWS') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'ssh-credentials', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
+                    remote.user = userName
+                    remote.identityFile = identity
 
-            stage('Deploy AWS') {
-                sshCommand remote: remote, command: 'if [ -f docker-compose.yml ]; then sudo docker-compose down && rm docker-compose.yml; fi'
-                sshPut remote: remote, from: 'docker-compose.yml', into: '.'
-                sshCommand remote: remote, command: 'sudo docker-compose up -d'
+                    sshCommand remote: remote, command: 'if [ -f docker-compose.yml ]; then sudo docker-compose down && rm docker-compose.yml; fi'
+                    sshPut remote: remote, from: 'docker-compose.yml', into: '.'
+                    sshCommand remote: remote, command: 'sudo docker-compose up -d'
+                }
             }
         }
     }
