@@ -38,16 +38,17 @@ pipeline {
                 }
 
                 // Deploy na aws
-                sh """ssh -i ${env.SSH_KEY} ubuntu@${env.DEPLOY_URL} << EOF
-                    if [ -f docker-compose.yml ]
-                    then
-                        sudo docker-compose down
-                        rm docker-compose.yml
-                    fi
+                sshagent(credentials: ['ssh-credentials']) {
+                    sh """ 
+                        if [ -f docker-compose.yml ];
+                        then
+                            sudo docker-compose down && rm docker-compose.yml
+                        fi
 
-                    wget https://raw.githubusercontent.com/Rrlopes07/pucpr-devops/main/docker-compose.yml
-                    sudo docker-compose up -d
-                EOF"""
+                        wget https://raw.githubusercontent.com/Rrlopes07/pucpr-devops/main/docker-compose.yml
+                        sudo docker-compose up -d
+                    """
+                }
             }
         }
     }
